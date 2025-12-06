@@ -1,0 +1,44 @@
+{
+  "name": "pixel-serve-test",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Integration test application for pixel-serve packages",
+  "workspaces": [
+    "server",
+    "client"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hiprax/pixel-serve-test.git"
+  },
+  "author": "Hiprax",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Hiprax/pixel-serve-test/issues"
+  },
+  "homepage": "https://github.com/Hiprax/pixel-serve-test#readme",
+  "keywords": [
+    "Pixel Serve",
+    "Image",
+    "Image Serving",
+    "Image Optimization",
+    "Image Resizing",
+    "Image Formatting",
+    "Image Transformation"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "install:all": "npm install && cd server && npm install && cd ../client && npm install",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd client && npm run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "build:server": "cd server && npm run build",
+    "build:client": "cd client && npm run build",
+    "build": "npm run build:server && npm run build:client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  }
+}
