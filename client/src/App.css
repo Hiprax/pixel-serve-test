@@ -198,9 +198,11 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.demo-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+@media (hover: hover) {
+  .demo-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .demo-card.wide {
@@ -458,9 +460,11 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.format-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+@media (hover: hover) {
+  .format-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .format-header {
@@ -729,8 +733,10 @@
   isolation: isolate; /* Create stacking context for background images */
 }
 
-.feature-card:hover {
-  transform: scale(1.02);
+@media (hover: hover) {
+  .feature-card:hover {
+    transform: scale(1.02);
+  }
 }
 
 .feature-card-content {
@@ -841,8 +847,10 @@
   transition: transform 0.2s ease;
 }
 
-.network-card:hover {
-  transform: translateY(-2px);
+@media (hover: hover) {
+  .network-card:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .network-card-info {

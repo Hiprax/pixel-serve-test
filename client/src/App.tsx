@@ -96,6 +96,7 @@ function App() {
     { id: "avatars", label: "Avatars", icon: "👤" },
     { id: "background", label: "Background", icon: "🌄" },
     { id: "direct", label: "Direct", icon: "⚡" },
+    { id: "private", label: "Private", icon: "🔒" },
     { id: "network", label: "Network", icon: "🌐" },
     { id: "gallery", label: "Gallery", icon: "🎭" },
     { id: "helpers", label: "Helpers", icon: "🔧" },
@@ -151,6 +152,7 @@ function App() {
           {activeSection === "avatars" && <AvatarsSection />}
           {activeSection === "background" && <BackgroundSection />}
           {activeSection === "direct" && <DirectSection />}
+          {activeSection === "private" && <PrivateSection />}
           {activeSection === "network" && <NetworkSection />}
           {activeSection === "gallery" && <GallerySection />}
           {activeSection === "helpers" && <HelpersSection />}
@@ -882,6 +884,142 @@ function DirectSection() {
             <li>Images already optimized by a CDN</li>
             <li>Data URLs (base64, SVG)</li>
             <li>External APIs with their own image processing</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PrivateSection() {
+  return (
+    <section className="section animate-in">
+      <h2>Private Images</h2>
+      <p className="section-desc">
+        Access user-specific private images using <code>folder="private"</code>{" "}
+        and <code>userId</code>. The server resolves a per-user directory via{" "}
+        <code>getUserFolder</code>.
+      </p>
+
+      <div className="demo-grid">
+        <div className="demo-card">
+          <h3>👤 User 1 Photo</h3>
+          <div className="image-container">
+            <Pixel
+              src="photo.jpg"
+              alt="User 1 private photo"
+              width={400}
+              height={300}
+              backendUrl={API_URL}
+              folder="private"
+              userId="user1"
+            />
+          </div>
+          <pre className="code">
+            {`<Pixel
+  src="photo.jpg"
+  folder="private"
+  userId="user1"
+/>`}
+          </pre>
+        </div>
+
+        <div className="demo-card">
+          <h3>👤 User 2 Photo</h3>
+          <div className="image-container">
+            <Pixel
+              src="photo.jpg"
+              alt="User 2 private photo"
+              width={400}
+              height={300}
+              backendUrl={API_URL}
+              folder="private"
+              userId="user2"
+            />
+          </div>
+          <pre className="code">
+            {`<Pixel
+  src="photo.jpg"
+  folder="private"
+  userId="user2"
+/>`}
+          </pre>
+        </div>
+
+        <div className="demo-card">
+          <h3>🔐 User 1 Avatar</h3>
+          <div className="image-container">
+            <Pixel
+              src="avatar.jpg"
+              alt="User 1 private avatar"
+              width={128}
+              height={128}
+              backendUrl={API_URL}
+              folder="private"
+              userId="user1"
+              type="avatar"
+            />
+          </div>
+          <pre className="code">
+            {`<Pixel
+  src="avatar.jpg"
+  folder="private"
+  userId="user1"
+  type="avatar"
+/>`}
+          </pre>
+        </div>
+      </div>
+
+      <h3 style={{ marginTop: "2rem" }}>Fallback Scenarios</h3>
+      <div className="demo-grid">
+        <div className="demo-card">
+          <h3>❌ Missing userId</h3>
+          <div className="image-container">
+            <Pixel
+              src="photo.jpg"
+              alt="No userId fallback"
+              width={300}
+              height={200}
+              backendUrl={API_URL}
+              folder="private"
+            />
+          </div>
+          <p className="card-desc" style={{ marginTop: "0.5rem" }}>
+            Without userId, falls back to public directory.
+          </p>
+        </div>
+
+        <div className="demo-card">
+          <h3>❌ Invalid User</h3>
+          <div className="image-container">
+            <Pixel
+              src="photo.jpg"
+              alt="Invalid user fallback"
+              width={300}
+              height={200}
+              backendUrl={API_URL}
+              folder="private"
+              userId="nonexistent"
+            />
+          </div>
+          <p className="card-desc" style={{ marginTop: "0.5rem" }}>
+            Non-existent user shows fallback image.
+          </p>
+        </div>
+      </div>
+
+      <div className="info-box" style={{ marginTop: "1.5rem" }}>
+        <span className="info-icon">💡</span>
+        <div>
+          <strong>Private Image Security:</strong>
+          <ul style={{ margin: "0.5rem 0 0 1rem", opacity: 0.9 }}>
+            <li>
+              Server resolves user folders via <code>getUserFolder</code>{" "}
+              callback
+            </li>
+            <li>Authentication should be verified in the callback</li>
+            <li>Path traversal is prevented by the server</li>
           </ul>
         </div>
       </div>
