@@ -3,6 +3,8 @@
 A comprehensive integration test and visual demo application for the [`pixel-serve-server`](https://www.npmjs.com/package/pixel-serve-server) and [`pixel-serve-client`](https://www.npmjs.com/package/pixel-serve-client) packages.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![CI](https://github.com/Hiprax/pixel-serve-test/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Hiprax/pixel-serve-test/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Hiprax/pixel-serve-test/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/Hiprax/pixel-serve-test/actions/workflows/codeql.yml)
 
 ## Structure
 
@@ -121,6 +123,14 @@ The test server is configured with:
 | **ETag**                   | Enabled                                                                          |
 | **Request timeout**        | 10 seconds                                                                       |
 | **Max download size**      | 10MB                                                                             |
+
+## Demo Security Baseline
+
+The server ships with a small set of production-flavored defaults so the demo doubles as a teaching example:
+
+- **`helmet`** — Applies standard security response headers (`X-Content-Type-Options: nosniff`, `X-Frame-Options`, `Referrer-Policy`, etc.). CSP is intentionally disabled because the demo client uses inline styles; production deployments should re-enable CSP with an allowlist tailored to their bundle.
+- **`express-rate-limit`** — Caps each client IP at 200 requests/minute. Image processing is CPU-heavy, so this protects the event loop against accidental request storms while staying permissive enough for the gallery demo to refresh freely.
+- **`CORS_ORIGIN` env override** — The allowed CORS origin defaults to `http://localhost:5173` but can be overridden with the `CORS_ORIGIN` environment variable. Multiple origins may be supplied as a comma-separated list, e.g. `CORS_ORIGIN="http://localhost:5173,https://demo.example.com"`.
 
 ## Adding Test Images
 

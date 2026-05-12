@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+# This is an integration / demo workspace whose server and client packages
+# depend on sibling repos via `file:../../pixel-serve-{server,client}`. CI
+# checks out all three repos under the same parent directory so those
+# `file:` paths resolve, builds the two libraries, then verifies the test
+# workspace installs and type-checks against them.
+jobs:
+  integration:
+    name: Integration on Node ${{ matrix.node-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version:
+          - 20.x
+          - 22.x
+          - 24.x
+
+    steps:
+      - name: Checkout pixel-serve-test
+        uses: actions/checkout@v6
+        with:
+          path: pixel-serve-test
+          persist-credentials: false
+
+      - name: Checkout pixel-serve-server
+        uses: actions/checkout@v6
+        with:
+          repository: Hiprax/pixel-serve-server
+          path: pixel-serve-server
+          ref: main
+          persist-credentials: false
+
+      - name: Checkout pixel-serve-client
+        uses: actions/checkout@v6
+        with:
+          repository: Hiprax/pixel-serve-client
+          path: pixel-serve-client
+          ref: main
+          persist-credentials: false
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Build pixel-serve-server
+        working-directory: pixel-serve-server
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build pixel-serve-client
+        working-directory: pixel-serve-client
+        run: |
+          npm ci
+          npm run build
+
+      - name: Install pixel-serve-test workspaces
+        working-directory: pixel-serve-test
+        run: npm install --no-audit --no-fund
+
+      - name: Type-check workspaces
+        working-directory: pixel-serve-test
+        run: npm run type-check
+
+      - name: Build workspaces
+        working-directory: pixel-serve-test
+        run: npm run build
+
+      - name: Smoke-test the demo server
+        working-directory: pixel-serve-test/server
+        env:
+          PORT: "3001"
+          HOST: "127.0.0.1"
+        run: |
+          npm start &
+          SERVER_PID=$!
+          # Wait for the health endpoint, up to 30s.
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3001/api/health > /dev/null; then
+              echo "Server up after ${i}s."
+              break
+            fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:3001/api/health
+          curl -fsS http://127.0.0.1:3001/api/info > /dev/null
+          kill "$SERVER_PID"

@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: pixel-serve-server issues
+    url: https://github.com/Hiprax/pixel-serve-server/issues
+    about: Bugs and feature requests for the server middleware belong here.
+  - name: pixel-serve-client issues
+    url: https://github.com/Hiprax/pixel-serve-client/issues
+    about: Bugs and feature requests for the React component belong here.
+  - name: Security vulnerability
+    url: https://github.com/Hiprax/pixel-serve-test/security/advisories/new
+    about: Please report security issues privately via GitHub Security Advisories.

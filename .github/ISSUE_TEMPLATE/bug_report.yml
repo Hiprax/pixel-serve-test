@@ -1,0 +1,63 @@
+name: Bug report
+description: Report a problem with the pixel-serve-test integration app
+title: "[bug] "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the demo / integration app for pixel-serve-server and pixel-serve-client. If the underlying issue is in either of those packages, file the bug on the corresponding repo instead.
+  - type: dropdown
+    id: workspace
+    attributes:
+      label: "Where does the bug manifest?"
+      options:
+        - server workspace (Express + pixel-serve-server)
+        - client workspace (React + Vite + pixel-serve-client)
+        - Both
+        - Tooling (npm scripts, workspaces)
+    validations:
+      required: true
+  - type: input
+    id: node
+    attributes:
+      label: "Node.js version"
+      description: "Run `node --version`."
+      placeholder: "v22.11.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: "Operating system"
+      options:
+        - Linux
+        - macOS
+        - Windows
+        - Other (note in description)
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: "Steps to reproduce"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected behavior"
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: "Actual behavior"
+      description: "Include the full console output / stack trace if applicable."
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: "Additional context"
