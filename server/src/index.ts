@@ -111,8 +111,11 @@ const serveImage = registerServe({
   // framework will reject it and fall back to `baseDir`.
   getUserFolderRootDir: PRIVATE_DIR,
 
-  // Your website URL (for treating internal URLs as local)
-  websiteURL: "localhost:3001",
+  // Your website URL (for treating internal URLs as local). A bare hostname
+  // is deliberate: pixel-serve-server normalizes websiteURL to a hostname
+  // for the primary comparison, so a port suffix here would be inert but
+  // would also go stale the moment PORT (above) is overridden via env var.
+  websiteURL: "localhost",
 
   // API prefix to strip from internal URLs
   apiRegex: /^\/api\//,
