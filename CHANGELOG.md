@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+## [1.2.5] - 2026-07-02
+
+### Fixed
+
+- **Fix the demo `websiteURL` config so internal-URL detection actually resolves to a local read.** The demo configured `websiteURL: "localhost:3001"`, the host-qualified form that `pixel-serve-server`'s `fetchImage()` normalizes as part of its internal-vs-external comparison. That comparison matches a request as internal when either the request URL's `hostname` or its `host` (hostname+port) matches the configured value — but since the configured `host` is always the configured `hostname` optionally suffixed with that same value's own port, and no request can match on `host` without its `hostname` already matching too, the port suffix carried no weight: `"localhost:3001"` and a bare `"localhost"` behave identically for every request the demo can receive. Keeping the port implied a port-sensitivity the comparison doesn't have, and was a staleness trap — `PORT` is independently configurable via an env var, while `websiteURL` was a separate hardcoded literal that would not follow it. Changed to the bare hostname `"localhost"`, which matches this server on any port. Verified end-to-end after rebuilding the sibling `pixel-serve-server`/`pixel-serve-client` libraries: a request with `src` set to an absolute URL back at the demo's own origin (`http://localhost:3001/api/landscape1.jpg`) now returns output byte-identical to the equivalent local-relative request (`src=landscape1.jpg`), and stays distinct from the placeholder fallback served for a genuinely external, non-allowlisted host (`http://example.com/api/landscape1.jpg`). (`server/src/index.ts`)
+
+### Documentation
+
+- **Document the internal-host-detection setting.** Added an "Internal website host" row to the Server Configuration tables in this package's `README.md` and the root `CLAUDE.md`, noting that the bare hostname matches any port. (`README.md`, root `CLAUDE.md`)
+
 ## [1.2.4] - 2026-05-12
 
 ### Added
