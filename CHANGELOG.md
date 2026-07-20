@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file. The format 
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-07-20
+
+### Added
+
+- **Add an integration test suite — the first automated tests in this app.** Until now the demo was verified only by eye, which is how a whole class of regressions (every network image, and every sub-50px avatar, silently degrading to placeholders) went unnoticed: a fallback is still a valid `200` with a valid image, so nothing "looks" broken from the server's side. `server/test/integration.test.ts` drives the real Express app through supertest against the actual linked `pixel-serve-server` build and covers local images across all six output formats, true-size 32px/48px avatars, private-folder access with and without a `userId`, blocked hosts, path traversal, above-window dimensions, and the health/info endpoints. Assertions are deliberately non-vacuous: because `baseDir` contains the bundled placeholders themselves, body-equality with a fallback can pass whether or not the real branch ran, so the suite instead decodes PNG dimensions straight from the IHDR chunk, uses content-type mismatches (a hard fallback ignores the requested format), and distinguishes a genuine resolve from a fallback via the long-vs-short `Cache-Control`. A network test exercising the picsum CDN redirect is gated behind a connectivity probe so the suite stays green offline. (`server/test/integration.test.ts`, `server/vitest.config.ts`, `server/package.json`, `package.json`)
+- **Extract a `createApp()` factory so the server is testable without binding a port.** All middleware wiring (Helmet, rate limiting, CORS, the pixel-serve middleware, and the health/info routes) moved to `server/src/app.ts`; `server/src/index.ts` now only resolves `PORT`/`HOST`, calls `createApp()`, listens, and installs the shutdown handlers. The test suite drives the same factory the demo runs, so the tests cannot drift from the real configuration. (`server/src/app.ts`, `server/src/index.ts`)
+- **Showcase tiny 16px/24px icons in the Avatars section**, demonstrating sub-32px sizes that the server previously refused to serve. (`client/src/App.tsx`)
+
+### Fixed
+
+- **Restore every network image in the demo by allowlisting picsum's CDN subdomain.** `picsum.photos` answers with a `302` to `fastly.picsum.photos`, and `pixel-serve-server` re-validates every redirect hop against `allowedNetworkList` (correct SSRF behavior). With only the bare apex allowlisted, the CDN hop was rejected and **every** picsum-backed image in the demo fell back to a placeholder — the entire Network and Gallery sections, plus the picsum-sourced items scattered through Basic Usage, Formats, Sizes & Quality, Backgrounds, and three of the five user avatars. The allowlist now carries the `*.picsum.photos` wildcard (added in `pixel-serve-server` v2.12.0), which matches the apex and any CDN subdomain while leaving the per-hop public-IP DNS guard fully in force. (`server/src/app.ts`)
+- **Restore the 32px and 48px avatar size variants.** The framework previously rejected any requested dimension below 50, so those two variants rendered the avatar placeholder while 64/96/128 rendered correctly. `pixel-serve-server` v2.12.0 lowers that floor to 1; the demo now configures `minWidth`/`minHeight` of `16` so small avatars and icons are served at their true requested size rather than being clamped up. (`server/src/app.ts`)
+
+### Changed
+
+- **Keep the advertised allowed-hosts list in sync with the live configuration.** The "Allowed Hosts" badges and the README config table now list `*.picsum.photos` alongside the existing hosts, with a note explaining that the wildcard is what lets picsum's CDN redirect resolve. (`client/src/App.tsx`, `README.md`)
+- **Split the server TypeScript config so tests are type-checked but not emitted.** `tsconfig.json` now spans `src`, `test`, and `vitest.config.ts` for `type-check`, while the new `tsconfig.build.json` restricts `build` to `src` (and reinstates `rootDir`), keeping `dist/` free of test output. (`server/tsconfig.json`, `server/tsconfig.build.json`, `server/package.json`)
+
 ## [1.2.5] - 2026-07-02
 
 ### Fixed

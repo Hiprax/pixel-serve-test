@@ -645,6 +645,30 @@ function AvatarsSection() {
         </div>
       </div>
 
+      <div className="demo-card wide" style={{ marginTop: "1.5rem" }}>
+        <h3>🔬 Tiny Icons (16-24px)</h3>
+        <p className="card-desc">
+          Sub-32px sizes for favicons, inline badges, and dense lists. These are
+          served at their true dimensions.
+        </p>
+        <div className="avatar-sizes-row">
+          {[16, 24].map((size) => (
+            <div key={size} className="avatar-size-item">
+              <Pixel
+                src={SAMPLE_IMAGES.avatar1}
+                alt={`${size}px icon`}
+                type="avatar"
+                width={size}
+                height={size}
+                backendUrl={API_URL}
+                style={{ borderRadius: "50%" }}
+              />
+              <span className="size-badge">{size}px</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="demo-grid" style={{ marginTop: "1.5rem" }}>
         <div className="demo-card">
           <h3>🔄 Loading State</h3>
@@ -1067,10 +1091,17 @@ function NetworkSection() {
         </p>
         <div className="allowed-hosts">
           <span className="host-badge">picsum.photos</span>
+          <span className="host-badge">*.picsum.photos</span>
           <span className="host-badge">images.unsplash.com</span>
           <span className="host-badge">placekitten.com</span>
           <span className="host-badge">via.placeholder.com</span>
         </div>
+        <p className="card-desc" style={{ marginTop: "0.75rem" }}>
+          <code>*.picsum.photos</code> is a wildcard entry: picsum redirects to
+          a CDN subdomain (<code>fastly.picsum.photos</code>), and every
+          redirect hop is re-validated against this list, so the wildcard is
+          what lets those images resolve.
+        </p>
       </div>
 
       <div className="network-grid" style={{ marginTop: "1.5rem" }}>
