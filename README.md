@@ -117,7 +117,7 @@ The test server is configured with:
 | **Base directory**         | `./public/images`                                                                |
 | **Private directory**      | `./public/private/{userId}`                                                      |
 | **Internal website host**  | `localhost` (matches any port; requests whose `src` hostname is `localhost` are read from disk instead of fetched) |
-| **Allowed external hosts** | `images.unsplash.com`, `picsum.photos`, `placekitten.com`, `via.placeholder.com` |
+| **Allowed external hosts** | `images.unsplash.com`, `picsum.photos`, `*.picsum.photos`, `placekitten.com`, `via.placeholder.com` |
 | **Image bounds**           | 50-2000px                                                                        |
 | **Default quality**        | 80                                                                               |
 | **Cache**                  | 1 hour (`public, max-age=3600`)                                                  |
