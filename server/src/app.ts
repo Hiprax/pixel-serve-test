@@ -54,11 +54,33 @@ const resolveCorsOrigin = (): string | string[] => {
 export const createApp = (): express.Express => {
   const app = express();
 
-  // Security headers via Helmet. CSP is intentionally disabled because the
-  // demo React client renders with inline styles, which a strict default CSP
-  // would block. Production deployments should re-enable CSP with an allowlist
-  // tailored to their bundle.
-  app.use(helmet({ contentSecurityPolicy: false }));
+  // Security headers via Helmet, including a genuine Content-Security-Policy.
+  //
+  // CSP used to be disabled here on the rationale that the demo's React client
+  // renders with inline styles. That rationale did not hold: this process is an
+  // API/image server — every route returns image bytes or JSON, and it never
+  // serves the client's HTML (Vite serves that from a separate origin). A CSP
+  // on an image or JSON response does not constrain the page that embeds it, so
+  // disabling it bought nothing and cost a real security header.
+  //
+  // The policy below is therefore locked down to what this server actually
+  // emits: `default-src 'none'` denies everything by default, `img-src` covers
+  // the image responses, and the framing/base/form directives are pinned shut
+  // so a response can never be reframed or used as a form target.
+  app.use(
+    helmet({
+      contentSecurityPolicy: {
+        useDefaults: false,
+        directives: {
+          defaultSrc: ["'none'"],
+          imgSrc: ["'self'", "data:"],
+          frameAncestors: ["'none'"],
+          baseUri: ["'none'"],
+          formAction: ["'none'"],
+        },
+      },
+    }),
+  );
 
   // Rate limiting. Image processing is CPU-heavy (Sharp decodes, resizes, and
   // re-encodes on every miss), so an unauthenticated burst can starve the
