@@ -1,4 +1,10 @@
-import { createApp } from "./app";
+// Explicit `.js` extension: this package is `"type": "module"`, so the built
+// output is loaded by Node's ESM resolver (`npm start` → `node dist/index.js`),
+// which does not resolve extensionless relative specifiers. TypeScript maps the
+// `.js` specifier back to `app.ts` at compile time. Omitting it still type-
+// checks and still works under tsx/vitest, but crashes the built server with
+// ERR_MODULE_NOT_FOUND.
+import { createApp } from "./app.js";
 
 const PORT = Number(process.env.PORT) || 3001;
 // Bind to loopback by default so the demo server is not exposed on the LAN.
